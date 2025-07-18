@@ -1,0 +1,32 @@
+name: Build NightBoost APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        cache: 'gradle'
+
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+
+    - name: Build Release APK
+      run: ./gradlew app:assembleRelease
+
+    - name: Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: nightboost-release
+        path: app/build/outputs/apk/release/app-release.apk
